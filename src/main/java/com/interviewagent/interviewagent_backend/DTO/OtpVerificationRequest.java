@@ -5,5 +5,6 @@ import lombok.Data;
 @Data
 public class OtpVerificationRequest {
     String email;
-    String otp;
+    int otp;
+    boolean forPasswordReset;
 }
