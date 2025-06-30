@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Table(name = "users")
 @Entity
 @Getter
 @Setter
@@ -21,7 +22,14 @@ public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false)
     private UUID id;
+
+    @Version
+    private Long version;
+
+//    @Column(nullable = false)
+//    private String fullName;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -29,8 +37,8 @@ public class User implements Serializable {
     @Column(nullable = false)
     private String passwordHash;
 
-    private int otpCode;
-
+    private int signUpOTP;
+    private int resetPasswordOTP;
     private LocalDateTime otpExpiry;
 
     private boolean verified = false;

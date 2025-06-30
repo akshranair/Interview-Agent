@@ -42,12 +42,12 @@ public class JwtService {
     }
 
     public String extractUsername(String token){
-        return extractClaim(token, Claims::getSubject);// get the sub claim from jwt
+        return extractClaim(token, Claims::getSubject);// get the subclaim from jwt
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T>claimResolver){
+    public <T> T extractClaim(String token, Function<Claims, T>claimsResolver){
         Claims claims = extractAllClaims(token);
-        return claimResolver.apply(claims);// function takes Claims and returns a specific claim
+        return claimsResolver.apply(claims);// function takes Claims and returns a specific claim
         //getSubject() or getExpiration()
     }
 
@@ -61,7 +61,7 @@ public class JwtService {
 
     public boolean isTokenValid(String token, String username){ //check if the token's username matches the given username
         final String extractedUsername = extractUsername(token);
-        return extractedUsername.equals(username) && !isTokenExpired(token); //make sure the token has not expred
+        return extractedUsername.equals(username) && !isTokenExpired(token); //make sure the token has not expired
     }
 
     public boolean isTokenExpired(String token){
