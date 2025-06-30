@@ -1,8 +1,7 @@
-package com.interviewagent.interviewagent_backend.security;
+package com.interviewagent.interviewagent_backend.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,8 +30,9 @@ public class JwtService {
 
     //generate a JWT(JSON Web Token) for a given user
     //extra claims, ->optional information like user roles, permissions
-    public String generateToken(String username, Map<String, Object> extraClaims){
+    public String generateToken(String username, String role, Map<String, Object> extraClaims){
         return Jwts.builder()//build jwt token
+                .claim("role", role)
                 .claims(extraClaims) // add extra info
                 .subject(username) //identify the principal the jwt is for
                 .issuedAt(new Date()) // the time when jwt was created

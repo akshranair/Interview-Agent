@@ -2,9 +2,10 @@ package com.interviewagent.interviewagent_backend.service.impl;
 
 import com.interviewagent.interviewagent_backend.DTO.*;
 import com.interviewagent.interviewagent_backend.entity.User;
+import com.interviewagent.interviewagent_backend.enums.Role;
 import com.interviewagent.interviewagent_backend.exception.EmailAlreadyExistsException;
 import com.interviewagent.interviewagent_backend.repository.UserRepository;
-import com.interviewagent.interviewagent_backend.security.JwtService;
+import com.interviewagent.interviewagent_backend.service.JwtService;
 import com.interviewagent.interviewagent_backend.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 
 @Service
@@ -38,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
         user.setVerified(false);
-        user.setRole("USER");
+        user.setRole(Role.USER);
         userRepository.save(user);
         System.out.println(otp);
         return new SignUpResponse("OTP sent Succesfully", true);
@@ -97,7 +97,7 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Invalid Details");
         }
 
-        String token = jwtService.generateToken(request.getEmail(), Map.of());
+        String token = jwtService.generateToken(request.getEmail(), user.getRole().name(), Map.of());
         return new LoginResponse(token, "Login Successful");
     }
 
