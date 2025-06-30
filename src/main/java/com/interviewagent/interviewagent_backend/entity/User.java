@@ -1,5 +1,6 @@
 package com.interviewagent.interviewagent_backend.entity;
 
+import com.interviewagent.interviewagent_backend.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,8 +44,8 @@ public class User implements Serializable {
 
     private boolean verified = false;
 
-    private String role = "USER";
-
+    @Enumerated(EnumType.STRING)//store the actual name of the enum, else it will store 0,1,.. based on order
+    private Role role;
     @CreationTimestamp
     private LocalDateTime createdAt;
 

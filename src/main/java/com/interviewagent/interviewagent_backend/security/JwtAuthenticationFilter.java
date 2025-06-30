@@ -2,14 +2,15 @@ package com.interviewagent.interviewagent_backend.security;
 
 
 import com.interviewagent.interviewagent_backend.service.CustomUserDetailsService;
+import com.interviewagent.interviewagent_backend.service.JwtService;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
@@ -67,15 +69,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail);
 
             if(jwtService.isTokenValid(jwt, userDetails.getUsername())){
+
+                //functional interface to extract a custom claim from JWT
+                String role = jwtService.extractClaim(jwt, claims -> claims.get("role", String.class));
                 //create authentication token using userDetails, no credentials and user roles
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
-                        userDetails.getAuthorities()
+                        List.of(new SimpleGrantedAuthority("ROLE_" + role))
                 );
 
                 //attaches request -related details to the authToken
-                authToken.setDetails(new WebAuthenticationDetailsSource());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 // sets the authenticated user to spring security context ,so spring knows who is making the request
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }

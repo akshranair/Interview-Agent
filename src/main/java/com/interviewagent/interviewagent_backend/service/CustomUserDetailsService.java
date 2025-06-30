@@ -3,6 +3,7 @@ package com.interviewagent.interviewagent_backend.service;
 import com.interviewagent.interviewagent_backend.entity.User;
 import com.interviewagent.interviewagent_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,7 +26,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPasswordHash(),
-                Collections.emptyList()
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+                //Add the user's role as GrantedAuthority. Spring Security expects roles to be prefixed with "ROLE_
         );
     }
 }
